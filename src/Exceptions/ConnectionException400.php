@@ -2,7 +2,7 @@
 
 namespace Sdrockdev\Connections\Exceptions;
 
-class ConnectionException400 extends \Exception
+class ConnectionException400 extends ConnectionException
 {
 
 }

@@ -37,13 +37,11 @@ class Connection
         $code = $this->getCode($response);
 
         if ( $code >= 400 && $code < 500 ) {
-            throw new ConnectionException400($this->url . ' returned a ' . $code .
-                '. ' . $response->json()['message'] . implode(',', $response->json()['data']['errors']) );
+            throw ConnectionException400::forRecord($this->url, $response, $code);
         }
 
         if ( $code >= 500 && $code < 600 ) {
-            throw new ConnectionException500($this->url . ' returned a ' . $code .
-                '. ' . $response->json()['message'] ?? '' . $response->json()['data']['errors'] ?? '');
+            throw ConnectionException500::forRecord($this->url, $response, $code);
         }
 
         return $response;
