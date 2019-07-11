@@ -25,9 +25,7 @@ class Connection
     protected function getHeaders() {
         $result = [];
         if ( $this->authorizationHeader ) {
-            $result[] = [
-                'Authorization' => $this->authorizationHeader,
-            ];
+            $result['Authorization'] = $this->authorizationHeader;
         }
         return $result;
     }
@@ -39,11 +37,13 @@ class Connection
         $code = $this->getCode($response);
 
         if ( $code >= 400 && $code < 500 ) {
-            throw new ConnectionException400($this->url . ' returned a ' . $code);
+            throw new ConnectionException400($this->url . ' returned a ' . $code .
+                '. ' . $response->json()['message'] . implode(',', $response->json()['data']['errors']) );
         }
 
         if ( $code >= 500 && $code < 600 ) {
-            throw new ConnectionException500($this->url . ' returned a ' . $code);
+            throw new ConnectionException500($this->url . ' returned a ' . $code .
+                '. ' . $response->json()['message'] ?? '' . $response->json()['data']['errors'] ?? '');
         }
 
         return $response;

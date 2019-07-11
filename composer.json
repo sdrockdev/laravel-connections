@@ -34,7 +34,7 @@
                 "Sdrockdev\\Connections\\ConnectionsServiceProvider"
             ],
             "aliases": {
-                "Connection": "Sdrockdev\\Connections\\Facades\\Connection"
+                "Connections": "Sdrockdev\\Connections\\ConnectionsFacade"
             }
         }
     }
