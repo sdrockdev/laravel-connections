@@ -1,0 +1,41 @@
+{
+    "name": "sdrockdev/laravel-connections",
+    "description": "Record various connections to a central service for extended processing",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nick Turrietta",
+            "email": "nick.turrietta@sdrock.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "kitetail/zttp": "0.*",
+        "tightenco/collect": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sdrockdev\\Connections\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sdrockdev\\Connections\\Tests\\": "tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "laravel/lumen-framework": "5.5.*"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sdrockdev\\Connections\\ConnectionsServiceProvider"
+            ],
+            "aliases": {
+                "Connection": "Sdrockdev\\Connections\\Facades\\Connection"
+            }
+        }
+    }
+}
