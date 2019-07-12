@@ -15,23 +15,23 @@ $app->router->post('connect-success', function() {
             'item' => (object)[
                 'name' => app('request')->input('name'),
                 'email' => app('request')->input('email'),
-                'platform_id' => 1,
                 'updated_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'id' => 9,
             ],
+            'source_id' => 1,
         ]
     ]);
 });
 
-$app->router->post('connect-platform-does-not-exist', function() {
+$app->router->post('connect-source-does-not-exist', function() {
     return response()->json([
         'status' => 'fail',
         'message' => 'Invalid submission',
         'code' => 422,
         'data' => (object)[
             'errors' => [
-                'Platform id does not exist',
+                'Source id does not exist',
             ],
         ]
     ]);

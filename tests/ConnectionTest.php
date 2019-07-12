@@ -69,10 +69,10 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
     }
 
     /** @test */
-    function it_throws_an_exception_if_the_platform_id_does_not_exist()
+    function it_throws_an_exception_if_the_source_id_does_not_exist()
     {
         $this->expectException(ConnectionException400::class);
-        $connection = new Connection($this->url('connect-platform-id-does-not-exist'));
+        $connection = new Connection($this->url('connect-source-id-does-not-exist'));
         $response = $connection->record(new ConnectEntry([
             'name'   => 'Nick Turrietta',
             'emails' => 'nick.turrietta@sdrock.com',
