@@ -13,13 +13,12 @@ $app->router->post('connect-success', function() {
         'code' => 201,
         'data' => (object)[
             'item' => (object)[
-                'name' => app('request')->input('name'),
-                'email' => app('request')->input('email'),
+                'data' => app('request')->input('data'),
                 'updated_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'id' => 9,
+                'source_id' => app('request')->input('source_id'),
             ],
-            'source_id' => 1,
         ]
     ]);
 });

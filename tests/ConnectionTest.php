@@ -37,13 +37,14 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
     {
         $connection = new Connection($this->url('connect-success'));
         $response = $connection->record(new ConnectEntry([
-            'name'   => 'Nick Turrietta',
-            'emails' => 'nick.turrietta@sdrock.com',
-        ], 1));
+            'name'  => 'Nick Turrietta',
+            'email' => 'nick.turrietta@sdrock.com',
+        ], 12345));
         $this->assertTrue($response->isSuccess());
         $json = $response->json();
         $this->assertEquals(201, $json['code']);
-        $this->assertEquals('Nick Turrietta', $json['data']['item']['name']);
+        $this->assertEquals(12345, $json['data']['item']['source_id']);
+        $this->assertEquals('Nick Turrietta', json_decode($json['data']['item']['data'], true)['name']);
     }
 
     /** @test */
@@ -52,8 +53,8 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
         $this->expectException(ConnectionException400::class);
         $connection = new Connection($this->url('thisurldoesnotexist'));
         $connection->record(new ConnectEntry([
-            'name'   => 'Nick Turrietta',
-            'emails' => 'nick.turrietta@sdrock.com',
+            'name'  => 'Nick Turrietta',
+            'email' => 'nick.turrietta@sdrock.com',
         ], 1));
     }
 
@@ -63,8 +64,8 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
         $this->expectException(ConnectionException500::class);
         $connection = new Connection($this->url('connect-server-will-fail'));
         $connection->record(new ConnectEntry([
-            'name'   => 'Nick Turrietta',
-            'emails' => 'nick.turrietta@sdrock.com',
+            'name'  => 'Nick Turrietta',
+            'email' => 'nick.turrietta@sdrock.com',
         ], 1));
     }
 
@@ -74,8 +75,8 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
         $this->expectException(ConnectionException400::class);
         $connection = new Connection($this->url('connect-source-id-does-not-exist'));
         $response = $connection->record(new ConnectEntry([
-            'name'   => 'Nick Turrietta',
-            'emails' => 'nick.turrietta@sdrock.com',
+            'name'  => 'Nick Turrietta',
+            'email' => 'nick.turrietta@sdrock.com',
         ], 999999999));
         $json = $response->json();
         $this->assertEquals(422, $json['code']);
