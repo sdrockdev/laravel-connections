@@ -8,8 +8,6 @@ class ConnectionsServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/connections.php', 'connections');
-
         $this->publishes([
             __DIR__.'/../config/connections.php' => config_path('connections.php'),
         ]);
@@ -17,6 +15,8 @@ class ConnectionsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/connections.php', 'connections');
+
         $config = config('connections');
 
         $service   = $config['default'];
