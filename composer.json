@@ -11,13 +11,13 @@
     ],
     "require": {
         "php": ">=7.0",
-        "kitetail/zttp": "0.*",
+        "kitetail/zttp": "dev-rockdev",
         "tightenco/collect": "~8.0"
     },
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/jago86/zttp"
+            "url": "https://github.com/sdrockdev/zttp"
         }
     ],
     "autoload": {
