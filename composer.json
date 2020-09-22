@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "kitetail/zttp": "dev-rockdev",
+        "kitetail/zttp": "dev-rockdev as 0.9",
         "tightenco/collect": "~8.0"
     },
     "repositories": [
