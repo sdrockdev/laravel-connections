@@ -12,8 +12,14 @@
     "require": {
         "php": ">=7.0",
         "kitetail/zttp": "0.*",
-        "tightenco/collect": "^5.4"
+        "tightenco/collect": "~8.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jago86/zttp"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Sdrockdev\\Connections\\": "src/"
@@ -25,8 +31,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0",
-        "laravel/lumen-framework": "5.5.*"
+        "phpunit/phpunit": "^7.0"
     },
     "extra": {
         "laravel": {
