@@ -3,8 +3,10 @@
 use PHPUnit\Framework\TestCase;
 use Sdrockdev\Connections\Connection;
 use Sdrockdev\Connections\ConnectEntry;
-use Sdrockdev\Connections\Exceptions\ConnectionException400;
-use Sdrockdev\Connections\Exceptions\ConnectionException500;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+#use Sdrockdev\Connections\Exceptions\ConnectionException400;
+#use Sdrockdev\Connections\Exceptions\ConnectionException500;
 
 class ConnectionTest extends PHPUnit\Framework\TestCase
 {
@@ -13,44 +15,45 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
         ConnectionServer::start();
     }
 
-    function url($url)
+    public function url($url)
     {
         return 'http://localhost:' . getenv('TEST_SERVER_PORT') . '/' . ltrim($url, '/');
     }
 
     /** @test */
-    function it_can_be_instantiated_with_a_valid_url()
+    public function it_can_be_instantiated_with_a_valid_url()
     {
         $connection = new Connection('https://www.google.com');
         $this->assertInstanceOf(Connection::class, $connection);
     }
 
     /** @test */
-    function it_throws_an_exception_when_instantiating_with_an_invalid_url()
+    public function it_throws_an_exception_when_instantiating_with_an_invalid_url()
     {
         $this->expectException(InvalidArgumentException::class);
         $connection = new Connection('thisisnotanactualurl');
     }
 
     /** @test */
-    function it_can_record_a_new_connect_entry()
+    public function it_can_record_a_new_connect_entry()
     {
         $connection = new Connection($this->url('connect-success'));
         $response = $connection->record(new ConnectEntry([
             'name'  => 'Nick Turrietta',
             'email' => 'nick.turrietta@sdrock.com',
         ], 12345));
-        $this->assertTrue($response->isSuccess());
-        $json = $response->json();
+        $body = $response->getBody();
+        $json = json_decode($body, true);
         $this->assertEquals(201, $json['code']);
         $this->assertEquals(12345, $json['data']['item']['source_id']);
         $this->assertEquals('Nick Turrietta', json_decode($json['data']['item']['data'], true)['name']);
     }
 
+
     /** @test */
-    function it_throws_a_404_exception_if_url_does_not_exist()
+    public function it_throws_a_client_exception_if_url_does_not_exist()
     {
-        $this->expectException(ConnectionException400::class);
+        $this->expectException(ClientException::class);
         $connection = new Connection($this->url('thisurldoesnotexist'));
         $connection->record(new ConnectEntry([
             'name'  => 'Nick Turrietta',
@@ -59,9 +62,9 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
     }
 
     /** @test */
-    function it_throws_a_500_exception_if_there_is_an_error_on_the_api_server()
+    public function it_throws_a_server_exception_if_there_is_an_error_on_the_api_server()
     {
-        $this->expectException(ConnectionException500::class);
+        $this->expectException(ServerException::class);
         $connection = new Connection($this->url('connect-server-will-fail'));
         $connection->record(new ConnectEntry([
             'name'  => 'Nick Turrietta',
@@ -70,22 +73,25 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
     }
 
     /** @test */
-    function it_throws_an_exception_if_the_source_id_does_not_exist()
+    public function it_throws_a_client_exception_if_the_source_id_does_not_exist()
     {
-        $this->expectException(ConnectionException400::class);
+        $this->expectException(ClientException::class);
         $connection = new Connection($this->url('connect-source-id-does-not-exist'));
         $response = $connection->record(new ConnectEntry([
             'name'  => 'Nick Turrietta',
             'email' => 'nick.turrietta@sdrock.com',
         ], 999999999));
-        $json = $response->json();
+        $body = $response->getBody();
+        $json = json_decode($body, true);
         $this->assertEquals(422, $json['code']);
     }
+
+
 
     // This is needed because there is a problem with phpunit output buffering when
     // running the background process
     // https://stackoverflow.com/questions/6378845/phpunit-problem-no-error-messages
-    protected function debug($text)
+    protected function _debug($text)
     {
         print_r($text);
         flush();
@@ -99,9 +105,8 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
 
 class ConnectionServer
 {
-    static function start()
+    public static function start()
     {
-
         if ( static::platform() == 'Windows' ) {
             static::startOnWindows();
         }
@@ -109,11 +114,10 @@ class ConnectionServer
         else {
             static::startOnLinux();
         }
-
     }
 
-    static function startOnWindows() {
-
+    public static function startOnWindows()
+    {
         $cmd = 'start /B php -S ' . 'localhost:' . getenv('TEST_SERVER_PORT') .
             ' -t ./tests/server/public > NUL 2>&1';
 
@@ -122,10 +126,10 @@ class ConnectionServer
         register_shutdown_function(function() {
             exec('taskkill /F /IM "php.exe"');
         });
-
     }
 
-    static function startOnLinux() {
+    public static function startOnLinux()
+    {
         $cmd = 'php -S ' . 'localhost:' . getenv('TEST_SERVER_PORT') .
             ' -t ./tests/server/public > /dev/null' . ' 2>&1 & echo $!';
 
@@ -140,10 +144,12 @@ class ConnectionServer
         });
     }
 
-    static function platform() {
+    public static function platform()
+    {
         if ( strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' ) {
             return 'Windows';
         }
+
         return 'Linux';
     }
 }

@@ -2,58 +2,45 @@
 
 namespace Sdrockdev\Connections;
 
-use Sdrockdev\Connections\Exceptions\ConnectionException400;
-use Sdrockdev\Connections\Exceptions\ConnectionException500;
-use Zttp\Zttp;
+use GuzzleHttp\Client;
 
 class Connection
 {
     protected $url;
     protected $authorizationHeader;
 
-    public function __construct($url) {
+    public function __construct($url)
+    {
         if ( ! filter_var($url, FILTER_VALIDATE_URL) ) {
             throw new \InvalidArgumentException($url . ' is not a valid url');
         }
+
         $this->url = $url;
     }
 
-    public function setAuthorizationHeader($authorizationHeader) {
+    public function setAuthorizationHeader($authorizationHeader)
+    {
         $this->authorizationHeader = $authorizationHeader;
     }
 
-    protected function getHeaders() {
+    public function record(ConnectEntry $entry)
+    {
+        $client = new Client();
+
+        return $client->post($this->url, [
+            'headers' => $this->_headers(),
+            'json'    => $entry->build(),
+        ]);
+    }
+
+    protected function _headers()
+    {
         $result = [];
+
         if ( $this->authorizationHeader ) {
             $result['Authorization'] = $this->authorizationHeader;
         }
+
         return $result;
-    }
-
-    public function record(ConnectEntry $entry) {
-        $response = Zttp::withHeaders($this->getHeaders())
-            ->post($this->url, $entry->build());
-
-        $code = $this->getCode($response);
-
-        if ( $code >= 400 && $code < 500 ) {
-            throw ConnectionException400::forRecord($this->url, $response, $code);
-        }
-
-        if ( $code >= 500 && $code < 600 ) {
-            throw ConnectionException500::forRecord($this->url, $response, $code);
-        }
-
-        return $response;
-    }
-
-    protected function getCode($response)
-    {
-       if ( ! $response ) {
-           return null;
-       }
-       $json = $response->json();
-       return $json['code'] ??
-           $response->getStatusCode();
     }
 }

@@ -11,15 +11,12 @@
     ],
     "require": {
         "php": ">=7.0",
-        "kitetail/zttp": "dev-rockdev",
-        "tightenco/collect": "~8.0"
+        "guzzlehttp/guzzle": "~7.0"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/sdrockdev/zttp"
-        }
-    ],
+    "require-dev": {
+        "laravel/lumen-framework": "~8.0",
+        "phpunit/phpunit": "^7.0"
+    },
     "autoload": {
         "psr-4": {
             "Sdrockdev\\Connections\\": "src/"
@@ -29,9 +26,6 @@
         "psr-4": {
             "Sdrockdev\\Connections\\Tests\\": "tests"
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^7.0"
     },
     "extra": {
         "laravel": {
