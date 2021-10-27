@@ -41,11 +41,11 @@ class ConnectionTest extends PHPUnit\Framework\TestCase
         $response = $connection->record(new ConnectEntry([
             'name'  => 'Nick Turrietta',
             'email' => 'nick.turrietta@sdrock.com',
-        ], 12345));
+        ], 'source_key_here'));
         $body = $response->getBody();
         $json = json_decode($body, true);
         $this->assertEquals(201, $json['code']);
-        $this->assertEquals(12345, $json['data']['item']['source_id']);
+        $this->assertEquals('source_key_here', $json['data']['item']['source_key']);
         $this->assertEquals('Nick Turrietta', json_decode($json['data']['item']['data'], true)['name']);
     }
 

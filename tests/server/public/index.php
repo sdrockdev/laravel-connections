@@ -17,7 +17,7 @@ $app->router->post('connect-success', function() {
                 'updated_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'id' => 9,
-                'source_id' => app('request')->input('source_id'),
+                'source_key' => app('request')->input('source_key'),
             ],
         ]
     ]);
@@ -30,7 +30,7 @@ $app->router->post('connect-source-does-not-exist', function() {
         'code' => 422,
         'data' => (object)[
             'errors' => [
-                'Source id does not exist',
+                'Source key does not exist',
             ],
         ]
     ]);
